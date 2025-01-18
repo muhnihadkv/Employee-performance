@@ -86,7 +86,7 @@ public class EmployeeService {
         for (String PosDev : PosDevs) {
             for (String NegDev : NegDevs) {
                 for (Employee employee : employees) {
-                    if (employee.getRating().getRatingId().equals(PosDev) && canMoveDown(PosDev,NegDev)) {
+                    if (employee.getRating().getRatingId().equals(PosDev) && canMoveDown(PosDev,NegDev, employees)) {
                         out.append("Moving ")
                                 .append(employee.getName())
                                 .append(" from ")
@@ -98,7 +98,6 @@ public class EmployeeService {
                         for (Distribution distribution: distributions){
                             distribution.setActual(findActual(distribution.getRating().getRatingId()));
                         }
-
                         break;
                     }
                 }
@@ -107,10 +106,22 @@ public class EmployeeService {
         return out.toString();
     }
 
-    private boolean canMoveDown(String PosDev, String NegDev) {
+    private boolean canMoveDown(String PosDev, String NegDev, List<Employee> employees) {
         Distribution PosDis = distributionRepository.findByRating(ratingRepository.findById(PosDev));
         Distribution NegDis = distributionRepository.findByRating(ratingRepository.findById(NegDev));
-        return (PosDis.getActual() > PosDis.getStandard()) && (NegDis.getActual() < NegDis.getStandard());
+        long PosCount = employees.stream()
+                .filter(employee -> employee.getRating().getRatingId().equals(PosDev))
+                .count();
+
+        double PosAct = (double) ((PosCount - 1) * 100) /employeeRepository.count();
+
+        long NegCount = employees.stream()
+                .filter(employee -> employee.getRating().getRatingId().equals(NegDev))
+                .count();
+
+        double NegAct = (double) ((NegCount + 1) * 100) /employeeRepository.count();
+
+        return (PosAct >= PosDis.getStandard()) && (NegAct <= NegDis.getStandard());
     }
 
 }
