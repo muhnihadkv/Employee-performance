@@ -98,7 +98,3 @@ This project is a Spring Boot application designed to manage employee performanc
 5. **Bell Curve Analysis**:
    - Endpoint: `GET /bellCurve`
    - Description: Provides advice or suggestions on which employees' ratings should be revised based on deviations.
-
-## Conclusion
-
-This application provides a comprehensive solution for managing employee performance ratings and distributions. By following the setup instructions, you can easily run the application and utilize the provided APIs to manage and analyze employee performance data.
